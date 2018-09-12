@@ -16,9 +16,11 @@ public class DynamicPropertyHelper {
 
     private static DefaultPropertyFactory defaultPropertyFactory;
 
+    private static Config rootConfig;
+
     static {
         try {
-            Config rootConfig = DefaultConfigLoader.builder().build().newLoader().load(rootConfigPath);
+            rootConfig = DefaultConfigLoader.builder().build().newLoader().load(rootConfigPath);
             defaultPropertyFactory = DefaultPropertyFactory.from(rootConfig);
         } catch (ConfigException e) {
             e.printStackTrace();
