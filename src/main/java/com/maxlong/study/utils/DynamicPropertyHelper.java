@@ -12,7 +12,7 @@ import com.netflix.archaius.api.exceptions.ConfigException;
  */
 public class DynamicPropertyHelper {
 
-    private static final String rootConfigPath = "config/config.properties";
+    private static final String ROOTCONFIGPATH = "config/config.properties";
 
     private static DefaultPropertyFactory defaultPropertyFactory;
 
@@ -20,11 +20,15 @@ public class DynamicPropertyHelper {
 
     static {
         try {
-            rootConfig = DefaultConfigLoader.builder().build().newLoader().load(rootConfigPath);
+            rootConfig = DefaultConfigLoader.builder().build().newLoader().load(ROOTCONFIGPATH);
             defaultPropertyFactory = DefaultPropertyFactory.from(rootConfig);
         } catch (ConfigException e) {
-            e.printStackTrace();
+            //do nothing
         }
+    }
+
+    private DynamicPropertyHelper() {
+        throw new IllegalStateException("Utility class");
     }
 
     public static String getStringProperty(String propName){

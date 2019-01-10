@@ -22,6 +22,10 @@ public class ParamNumFormatUtil {
 
     public static final String DF_WITH4 = "#0.0000";
 
+    private ParamNumFormatUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * @description 沪合约为整数
      */

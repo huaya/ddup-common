@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class StringUtil {
 
+    private StringUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 字符串居中左右填充空格
      *
@@ -32,7 +36,7 @@ public class StringUtil {
         if (shortLength % 2 != 0) {
             str = str + " ";
         }
-        StringBuffer blank = new StringBuffer();
+        StringBuilder blank = new StringBuilder();
         for (int i = 0; i < shortLength / 2; i++) {
             blank.append(" ");
         }

@@ -13,6 +13,10 @@ import java.util.Date;
  */
 public class DateUtil {
 
+    private DateUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * convert a date to string in a specifies fromat.
      *
@@ -38,7 +42,6 @@ public class DateUtil {
         try {
             return myFormat.parse(dateStr);
         } catch (ParseException e) {
-            e.printStackTrace();
             return null;
         }
     }

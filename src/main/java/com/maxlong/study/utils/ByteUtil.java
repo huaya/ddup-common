@@ -7,16 +7,20 @@ package com.maxlong.study.utils;
  */
 public class ByteUtil {
 
+    private ByteUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * convert a byte array to hex string
      * @param bytes
      * @return
      */
     public static String bytes2hex(byte[] bytes) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < bytes.length; i++) {
-            buffer.append(Integer.toString(bytes[i] >>> 4 & 0xF, 16)).append(Integer.toString(bytes[i] & 0xF, 16));
+            builder.append(Integer.toString(bytes[i] >>> 4 & 0xF, 16)).append(Integer.toString(bytes[i] & 0xF, 16));
         }
-        return buffer.toString();
+        return builder.toString();
     }
 }

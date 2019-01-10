@@ -1,11 +1,13 @@
 package com.maxlong.study.utils;
 
 import com.google.common.base.Splitter;
+import com.maxlong.study.exception.MyOwnRuntimeException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.*;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +24,11 @@ import java.util.List;
 public class FileUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
+
+    private FileUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 拷贝文件
      *
@@ -119,7 +126,7 @@ public class FileUtil {
             File srcFile = new File(fromFile);
             File destFile = new File(toFile);
             if (destFile.exists()) {
-                destFile.delete();
+                Files.delete(destFile.toPath());
             }
             FileUtils.moveFile(srcFile, destFile);
             move = true;
@@ -178,21 +185,13 @@ public class FileUtil {
      */
     public static byte[] readAllBytesFromFile(File file) {
         byte[] fileBytes = null;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "r");
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
             randomAccessFile.seek(0);
             int length = (int) randomAccessFile.length();
             fileBytes = new byte[length];
             randomAccessFile.readFully(fileBytes);
         } catch (IOException ioe) {
 	        LOGGER.warn("read all bytes from file io exception, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-            } catch (IOException e) {
-	            LOGGER.warn("read all bytes from file close file channel, fromFile {} :{}", file.getAbsolutePath(), e.getMessage());
-            }
         }
         return fileBytes;
     }
@@ -205,10 +204,8 @@ public class FileUtil {
      * @return 所有行的内容
      */
     public static List<String> readLineFromFile(File file, int pos, String encode) {
-        List<String> lines = new ArrayList<String>();
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "r");
+        List<String> lines = new ArrayList<>();
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
             randomAccessFile.seek(pos);
             String line;
             while ((line = randomAccessFile.readLine()) != null) {
@@ -216,13 +213,7 @@ public class FileUtil {
                     lines.add(new String(line.getBytes("ISO-8859-1"), encode));
             }
         } catch (IOException ioe) {
-            throw new RuntimeException("readLineFromFile error:" + ioe.getMessage());
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-            } catch (IOException e) {
-	            LOGGER.warn("read all bytes from file close file channel, fromFile {} :{}", file.getAbsolutePath(), e.getMessage());
-            }
+            throw new MyOwnRuntimeException("readLineFromFile error:" + ioe.getMessage());
         }
         return lines;
     }
@@ -236,12 +227,11 @@ public class FileUtil {
      */
     public static BufferedReader openBufferReaderFromFile(File file, String encode) {
         BufferedReader reader;
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader input = new InputStreamReader(fileInputStream, encode);
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+             InputStreamReader input = new InputStreamReader(fileInputStream, encode)){
             reader = new BufferedReader(input);
         } catch (IOException e) {
-            throw new RuntimeException("openBufferReaderFromFile error:" + e.getMessage());
+            throw new MyOwnRuntimeException("openBufferReaderFromFile error:" + e.getMessage());
         }
         return reader;
     }
@@ -254,7 +244,7 @@ public class FileUtil {
      * @return
      */
     public static List<String> readBatchLineWithReader(BufferedReader reader, int batchNum) {
-        List<String> lines = new ArrayList<String>(batchNum);
+        List<String> lines = new ArrayList<>(batchNum);
         try {
             if (reader != null) {
                 String line;
@@ -267,7 +257,7 @@ public class FileUtil {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("readBatchLineFromReader error:" + e.getMessage());
+            throw new MyOwnRuntimeException("readBatchLineFromReader error:" + e.getMessage());
         }
         return lines;
     }
@@ -282,7 +272,7 @@ public class FileUtil {
             try {
                 reader.close();
             } catch (IOException e) {
-                throw new RuntimeException("closeBufferReader error:" + e.getMessage());
+                throw new MyOwnRuntimeException("closeBufferReader error:" + e.getMessage());
             }
         }
     }
@@ -296,9 +286,7 @@ public class FileUtil {
      */
     public static int countLineFromFile(File file, int pos) {
         int count = 0;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "r");
+        try ( RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
             randomAccessFile.seek(pos);
             String line;
             while ((line = randomAccessFile.readLine()) != null) {
@@ -307,12 +295,6 @@ public class FileUtil {
             }
         } catch (IOException ioe) {
 	        LOGGER.warn("count line from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-            } catch (IOException e) {
-	            LOGGER.warn("count line from file close file channel, fromFile {} :{}", file.getAbsolutePath(), e.getMessage());
-            }
         }
         return count;
     }
@@ -325,21 +307,12 @@ public class FileUtil {
      * @return 行的内容
      */
     public static String readFirstLineFromFile(File file, String encode) {
-        String first = null;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "r");
+        String first = "";
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
             randomAccessFile.seek(0);
             first = new String(randomAccessFile.readLine().getBytes("ISO-8859-1"), encode);
         } catch (IOException ioe) {
-	        ioe.printStackTrace();
 	        LOGGER.warn("read first line  from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-            } catch (IOException e) {
-	            LOGGER.warn("read first line from file close file channel, fromFile {} :{}", file.getAbsolutePath(), e.getMessage());
-            }
         }
         return first;
     }
@@ -353,21 +326,13 @@ public class FileUtil {
      */
     public static boolean writeFirstLineToFile(File file, String line, String encode) {
         boolean wfirst = false;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "rw");
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")){
             randomAccessFile.seek(0);
             line = line + "\r\n";
             randomAccessFile.write(line.getBytes(encode));
             wfirst = true;
         } catch (IOException ioe) {
 	        LOGGER.warn("write first line  from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-            } catch (IOException e) {
-	            LOGGER.warn("write first line from file close file channel, fromFile {} :{}", file.getAbsolutePath(), e.getMessage());
-            }
         }
         return wfirst;
     }
@@ -381,12 +346,11 @@ public class FileUtil {
      */
     public static BufferedWriter openBufferWriterToFile(File file, String encode) {
         BufferedWriter writer;
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-            OutputStreamWriter out = new OutputStreamWriter(fileOutputStream, encode);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+             OutputStreamWriter out = new OutputStreamWriter(fileOutputStream, encode)){
             writer = new BufferedWriter(out);
         } catch (IOException e) {
-            throw new RuntimeException("openBufferWriterFromFile error:" + e.getMessage());
+            throw new MyOwnRuntimeException("openBufferWriterFromFile error:" + e.getMessage());
         }
         return writer;
     }
@@ -402,7 +366,7 @@ public class FileUtil {
         boolean write = false;
         try {
             int count = 0;
-            if (writer != null && lines != null && lines.size() > 0) {
+            if (writer != null && lines != null && !lines.isEmpty()) {
                 for (String line : lines) {
                     if(line != null && line.trim().length() > 0){
                         writer.write(line+"\r\n");
@@ -415,7 +379,7 @@ public class FileUtil {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("writeBatchLineWithWriter error:" + e.getMessage());
+            throw new MyOwnRuntimeException("writeBatchLineWithWriter error:" + e.getMessage());
         }
         return write;
     }
@@ -430,7 +394,7 @@ public class FileUtil {
             try {
                 writer.close();
             } catch (IOException e) {
-                throw new RuntimeException("closeBufferWriter error:" + e.getMessage());
+                throw new MyOwnRuntimeException("closeBufferWriter error:" + e.getMessage());
             }
         }
     }
@@ -445,20 +409,12 @@ public class FileUtil {
      */
     public static boolean replaceStrToFile(File file, int pos, String replaceStr, String encode) {
         boolean replace = false;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "rw");
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")){
             randomAccessFile.seek(pos);
             randomAccessFile.write(replaceStr.getBytes(encode));
             replace = true;
         } catch (IOException ioe) {
 	        LOGGER.warn("replace string to file, toFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-            } catch (IOException e) {
-	            LOGGER.warn("replace string to file close file channel, toFile {} :{}", file.getAbsolutePath(), e.getMessage());
-            }
         }
         return replace;
     }
@@ -473,9 +429,7 @@ public class FileUtil {
      * @return
      */
     public static String signFile(File file, String algorithm) {
-	    InputStream inputStream = null;
-	    try {
-		    inputStream = new FileInputStream(file);
+	    try (InputStream inputStream = new FileInputStream(file)){
 		    MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
 		    byte[] buff = new byte[SIGN_FILE_BUFF_SIZE];
 		    int length = 0;
@@ -485,14 +439,7 @@ public class FileUtil {
 
 		    return ByteUtil.bytes2hex(messageDigest.digest());
 	    } catch (Exception e) {
-		    throw new RuntimeException("readAllBytesFromFile error: " + e.getMessage());
-	    } finally {
-		    if(inputStream != null){
-			    try {
-				    inputStream.close();
-			    } catch (IOException e) {
-			    }
-		    }
+		    throw new MyOwnRuntimeException("readAllBytesFromFile error: " + e.getMessage());
 	    }
 	}
 
@@ -504,10 +451,10 @@ public class FileUtil {
                 messageDigest.update(fileBytes);
                 return ByteUtil.bytes2hex(messageDigest.digest());
             } else {
-                throw new RuntimeException("read file bytes is null");
+                throw new MyOwnRuntimeException("read file bytes is null");
             }
         } catch (Exception e) {
-            throw new RuntimeException("readAllBytesFromFile error: " + e.getMessage());
+            throw new MyOwnRuntimeException("readAllBytesFromFile error: " + e.getMessage());
         }
 
 	}
@@ -544,9 +491,9 @@ public class FileUtil {
         try{
             File file = new File(localFilePathWithFileName);
             if(!file.exists()){
-                LOGGER.warn("verifyFile local file {} not exists",new Object[]{localFilePathWithFileName});
+                LOGGER.warn("verifyFile local file {} not exists",localFilePathWithFileName);
             }else{
-                String firstLine  = FileUtil.readFirstLineFromFile(file,encode);
+                String firstLine  = readFirstLineFromFile(file,encode);
                 List<String> lineSplitList = Splitter.on("|").splitToList(firstLine);
                 String lineNum     = lineSplitList.get(0);
                 String orgSignData = lineSplitList.get(1);
@@ -556,13 +503,13 @@ public class FileUtil {
                     if(!signData.equalsIgnoreCase(orgSignData)){
                         /**标记本地文件失败*/
                         FileUtil.rename(file,new File(localFilePathWithFileName+"."+"verifyfailed."+ DateUtil.dateToStr(new Date(), "yyyyMMddHHmmss")));
-                        LOGGER.warn("verifyFile verify failed, local file {} orgSignData {}, calcSignData {}", new Object[]{localFilePathWithFileName, orgSignData, signData});
+                        LOGGER.warn("verifyFile verify failed, local file {} orgSignData {}, calcSignData {}", localFilePathWithFileName, orgSignData, signData);
                     }else{
                         replace =  FileUtil.replaceStrToFile(file,9,orgSignData,encode);
-                        LOGGER.info("verifyFile recovery local file {} first line result:{}",new Object[]{localFilePathWithFileName,replace?"successed":"failed"});
+                        LOGGER.info("verifyFile recovery local file {} first line result:{}",localFilePathWithFileName,replace?"successed":"failed");
                         int countLines = FileUtil.countLineFromFile(file,0);
                         if(Integer.parseInt(lineNum) != countLines-1){
-                            LOGGER.info("verifyFile countline failed local file {}, count lineNums:{}, remark lineNums:{}",new Object[]{localFilePathWithFileName,countLines,lineNum});
+                            LOGGER.info("verifyFile countline failed local file {}, count lineNums:{}, remark lineNums:{}",localFilePathWithFileName,countLines,lineNum);
                         }else{
                             result = true;
                         }
@@ -570,7 +517,7 @@ public class FileUtil {
                 }
             }
         }catch(Exception e){
-            LOGGER.error("verifyFile failed,cause by:{}",new Object[]{e.getMessage()});
+            LOGGER.error("verifyFile failed,cause by:{}",e);
         }
         return result;
     }
@@ -586,7 +533,7 @@ public class FileUtil {
                         return absLocalFilePathDirectory.mkdirs();
                     }
                 }catch (Exception ee){
-                    LOGGER.error("mkdir create file path {} failed,cause by:{}",new Object[]{ee.getMessage()});
+                    LOGGER.error("mkdir create file path {} failed,cause by:{}",path ,ee);
                 }
             }
         }else{
