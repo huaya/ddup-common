@@ -1,6 +1,12 @@
 package com.maxlong.study.utils;
 
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @describe：
  * @author： ma.xl
@@ -57,6 +63,29 @@ public class StringUtil {
             }
         }
         return valueLength;
+    }
+
+    public static String joinWithExludeBlank(final String separator, final String... strings){
+        if (strings == null) {
+            throw new IllegalArgumentException("Object varargs must not be null");
+        }
+        String sanitizedSeparator = separator == null ? "" : separator;
+
+        List<String> list = new ArrayList<>();
+        for (String string : strings) {
+            if(StringUtils.isNotBlank(string)){
+                list.add(string);
+            }
+        }
+        final Iterator<String> iterator = list.iterator();
+        final StringBuilder result = new StringBuilder();
+        while (iterator.hasNext()) {
+            result.append(iterator.next());
+            if (iterator.hasNext()) {
+                result.append(sanitizedSeparator);
+            }
+        }
+        return result.toString();
     }
 
 }
