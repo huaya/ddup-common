@@ -197,6 +197,54 @@ public class FileUtil {
     }
 
     /**
+     * 获得整个文件字节内容,默认UTF-8
+     * @param filePath
+     * @return
+     */
+    public static String readFileToStr(String filePath) {
+        File file = new File(filePath);
+        if(!file.exists()){
+            throw new MyOwnRuntimeException("file is not found.");
+        }
+        return readFileToStr(file, "UTF-8");
+    }
+
+    /**
+     * 获得整个文件字节内容,默认UTF-8
+     * @param filePath
+     * @return
+     */
+    public static String readFileToStr(String filePath, String encode) {
+        File file = new File(filePath);
+        return readFileToStr(file, encode);
+    }
+
+    /**
+     * 获得整个文件字节内容,默认UTF-8
+     * @param file
+     * @return
+     */
+    public static String readFileToStr(File file) {
+        return readFileToStr(file, "UTF-8");
+    }
+
+    /**
+     * 获得整个文件字节内容
+     * @param file
+     * @param encode
+     * @return
+     */
+    public static String readFileToStr(File file, String encode) {
+        byte[] bytes = readAllBytesFromFile(file);
+        try {
+            return new String(bytes, encode);
+        } catch (UnsupportedEncodingException e) {
+            throw new MyOwnRuntimeException("readFileToStr error:" + e);
+        }
+    }
+
+
+    /**
      * 一行一行读取文件内容 (过滤空行)
      *
      * @param file 获得的文件
@@ -213,7 +261,7 @@ public class FileUtil {
                     lines.add(new String(line.getBytes("ISO-8859-1"), encode));
             }
         } catch (IOException ioe) {
-            throw new MyOwnRuntimeException("readLineFromFile error:" + ioe.getMessage());
+            throw new MyOwnRuntimeException("readLineFromFile error:" + ioe);
         }
         return lines;
     }
