@@ -74,4 +74,23 @@ public class DateUtil {
         calendar.add(Calendar.SECOND, num);
         return dateToStr(calendar.getTime(), dateFormat);
     }
+
+    /**
+     * convert long to date
+     * @param dateLong
+     * @return
+     */
+    public static Date longToDate(long dateLong) {
+        return new Date(dateLong);
+    }
+
+    /**
+     * convert long to date string
+     * @param dateLong
+     * @param dateFormat
+     * @return
+     */
+    public static String longToDate(long dateLong, String dateFormat) {
+        return dateToStr(new Date(dateLong), dateFormat);
+    }
 }
