@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class FileUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     private FileUtil() {
         throw new IllegalStateException("Utility class");
@@ -43,7 +44,7 @@ public class FileUtil {
             FileUtils.copyFile(srcFile, outputStream);
             copy = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("copy file io exception, fromFile {} :{}", fromFile, ioe.getMessage());
+            LOGGER.warn("copy file io exception, fromFile {} :{}", fromFile, ioe.getMessage());
         }
         return copy;
     }
@@ -63,7 +64,7 @@ public class FileUtil {
             FileUtils.copyFile(srcFile, destFile);
             copy = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("copy file io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
+            LOGGER.warn("copy file io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
         }
         return copy;
     }
@@ -83,7 +84,7 @@ public class FileUtil {
             FileUtils.copyFileToDirectory(srcFile, destFile);
             copy = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("copy file to directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
+            LOGGER.warn("copy file to directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
         }
         return copy;
     }
@@ -107,7 +108,7 @@ public class FileUtil {
                 FileUtils.copyDirectory(srcFile, destFile);
             copy = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("copy file to directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
+            LOGGER.warn("copy file to directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
         }
         return copy;
     }
@@ -131,7 +132,7 @@ public class FileUtil {
             FileUtils.moveFile(srcFile, destFile);
             move = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("move file io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
+            LOGGER.warn("move file io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
         }
         return move;
     }
@@ -152,7 +153,7 @@ public class FileUtil {
             FileUtils.moveToDirectory(srcFile, destFile, createDestDir);
             move = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("move file to directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
+            LOGGER.warn("move file to directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
         }
         return move;
     }
@@ -172,7 +173,7 @@ public class FileUtil {
             FileUtils.moveDirectory(srcFile, destFile);
             move = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("move directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
+            LOGGER.warn("move directory io exception, fromFile {}, toFile {} :{}", fromFile, toFile, ioe.getMessage());
         }
         return move;
     }
@@ -185,25 +186,26 @@ public class FileUtil {
      */
     public static byte[] readAllBytesFromFile(File file) {
         byte[] fileBytes = null;
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
             randomAccessFile.seek(0);
             int length = (int) randomAccessFile.length();
             fileBytes = new byte[length];
             randomAccessFile.readFully(fileBytes);
         } catch (IOException ioe) {
-	        LOGGER.warn("read all bytes from file io exception, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
+            LOGGER.warn("read all bytes from file io exception, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
         }
         return fileBytes;
     }
 
     /**
      * 获得整个文件字节内容,默认UTF-8
+     *
      * @param filePath
      * @return
      */
     public static String readFileToStr(String filePath) {
         File file = new File(filePath);
-        if(!file.exists()){
+        if (!file.exists()) {
             throw new MyOwnRuntimeException("file is not found.");
         }
         return readFileToStr(file, "UTF-8");
@@ -211,6 +213,7 @@ public class FileUtil {
 
     /**
      * 获得整个文件字节内容,默认UTF-8
+     *
      * @param filePath
      * @return
      */
@@ -221,6 +224,7 @@ public class FileUtil {
 
     /**
      * 获得整个文件字节内容,默认UTF-8
+     *
      * @param file
      * @return
      */
@@ -230,6 +234,7 @@ public class FileUtil {
 
     /**
      * 获得整个文件字节内容
+     *
      * @param file
      * @param encode
      * @return
@@ -253,7 +258,7 @@ public class FileUtil {
      */
     public static List<String> readLineFromFile(File file, int pos, String encode) {
         List<String> lines = new ArrayList<>();
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
             randomAccessFile.seek(pos);
             String line;
             while ((line = randomAccessFile.readLine()) != null) {
@@ -267,6 +272,18 @@ public class FileUtil {
     }
 
     /**
+     * 一行一行读取文件内容 (过滤空行)
+     *
+     * @param filePath 获得的文件
+     * @param pos      行的起始位置
+     * @return 所有行的内容
+     */
+    public static List<String> readLineFromFile(String filePath, int pos, String encode) {
+        File file = new File(filePath);
+        return readLineFromFile(file, pos, encode);
+    }
+
+    /**
      * 打开文件访问通道
      *
      * @param file   文件
@@ -276,7 +293,7 @@ public class FileUtil {
     public static BufferedReader openBufferReaderFromFile(File file, String encode) {
         BufferedReader reader;
         try (FileInputStream fileInputStream = new FileInputStream(file);
-             InputStreamReader input = new InputStreamReader(fileInputStream, encode)){
+             InputStreamReader input = new InputStreamReader(fileInputStream, encode)) {
             reader = new BufferedReader(input);
         } catch (IOException e) {
             throw new MyOwnRuntimeException("openBufferReaderFromFile error:" + e.getMessage());
@@ -334,7 +351,7 @@ public class FileUtil {
      */
     public static int countLineFromFile(File file, int pos) {
         int count = 0;
-        try ( RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
             randomAccessFile.seek(pos);
             String line;
             while ((line = randomAccessFile.readLine()) != null) {
@@ -342,7 +359,7 @@ public class FileUtil {
                     count = count + 1;
             }
         } catch (IOException ioe) {
-	        LOGGER.warn("count line from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
+            LOGGER.warn("count line from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
         }
         return count;
     }
@@ -356,11 +373,11 @@ public class FileUtil {
      */
     public static String readFirstLineFromFile(File file, String encode) {
         String first = "";
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")){
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
             randomAccessFile.seek(0);
             first = new String(randomAccessFile.readLine().getBytes("ISO-8859-1"), encode);
         } catch (IOException ioe) {
-	        LOGGER.warn("read first line  from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
+            LOGGER.warn("read first line  from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
         }
         return first;
     }
@@ -374,13 +391,13 @@ public class FileUtil {
      */
     public static boolean writeFirstLineToFile(File file, String line, String encode) {
         boolean wfirst = false;
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")){
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")) {
             randomAccessFile.seek(0);
             line = line + "\r\n";
             randomAccessFile.write(line.getBytes(encode));
             wfirst = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("write first line  from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
+            LOGGER.warn("write first line  from file, fromFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
         }
         return wfirst;
     }
@@ -395,7 +412,7 @@ public class FileUtil {
     public static BufferedWriter openBufferWriterToFile(File file, String encode) {
         BufferedWriter writer;
         try (FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-             OutputStreamWriter out = new OutputStreamWriter(fileOutputStream, encode)){
+             OutputStreamWriter out = new OutputStreamWriter(fileOutputStream, encode)) {
             writer = new BufferedWriter(out);
         } catch (IOException e) {
             throw new MyOwnRuntimeException("openBufferWriterFromFile error:" + e.getMessage());
@@ -416,12 +433,12 @@ public class FileUtil {
             int count = 0;
             if (writer != null && lines != null && !lines.isEmpty()) {
                 for (String line : lines) {
-                    if(line != null && line.trim().length() > 0){
-                        writer.write(line+"\r\n");
-                        count ++;
+                    if (line != null && line.trim().length() > 0) {
+                        writer.write(line + "\r\n");
+                        count++;
                     }
                 }
-                if(count <= lines.size()){/**空行时可能小于*/
+                if (count <= lines.size()) {/**空行时可能小于*/
                     writer.flush();
                     write = true;
                 }
@@ -457,17 +474,17 @@ public class FileUtil {
      */
     public static boolean replaceStrToFile(File file, int pos, String replaceStr, String encode) {
         boolean replace = false;
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")){
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")) {
             randomAccessFile.seek(pos);
             randomAccessFile.write(replaceStr.getBytes(encode));
             replace = true;
         } catch (IOException ioe) {
-	        LOGGER.warn("replace string to file, toFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
+            LOGGER.warn("replace string to file, toFile {} :{}", file.getAbsolutePath(), ioe.getMessage());
         }
         return replace;
     }
 
-	private static final int SIGN_FILE_BUFF_SIZE = 1024 * 1024;//1M
+    private static final int SIGN_FILE_BUFF_SIZE = 1024 * 1024;//1M
 
     /**
      * 签名文件
@@ -477,21 +494,21 @@ public class FileUtil {
      * @return
      */
     public static String signFile(File file, String algorithm) {
-	    try (InputStream inputStream = new FileInputStream(file)){
-		    MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
-		    byte[] buff = new byte[SIGN_FILE_BUFF_SIZE];
-		    int length = 0;
-		    while((length = inputStream.read(buff, 0, buff.length)) != -1){
-			    messageDigest.update(buff, 0, length);
-		    }
+        try (InputStream inputStream = new FileInputStream(file)) {
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+            byte[] buff = new byte[SIGN_FILE_BUFF_SIZE];
+            int length = 0;
+            while ((length = inputStream.read(buff, 0, buff.length)) != -1) {
+                messageDigest.update(buff, 0, length);
+            }
 
-		    return ByteUtil.bytes2hex(messageDigest.digest());
-	    } catch (Exception e) {
-		    throw new MyOwnRuntimeException("readAllBytesFromFile error: " + e.getMessage());
-	    }
-	}
+            return ByteUtil.bytes2hex(messageDigest.digest());
+        } catch (Exception e) {
+            throw new MyOwnRuntimeException("readAllBytesFromFile error: " + e.getMessage());
+        }
+    }
 
-	public static String signReadAllFile(File file, String algorithm) {
+    public static String signReadAllFile(File file, String algorithm) {
         try {
             byte[] fileBytes = FileUtil.readAllBytesFromFile(file);
             if (fileBytes != null) {
@@ -505,7 +522,7 @@ public class FileUtil {
             throw new MyOwnRuntimeException("readAllBytesFromFile error: " + e.getMessage());
         }
 
-	}
+    }
 
     /**
      * 文件的重命名
@@ -521,70 +538,70 @@ public class FileUtil {
         return false;
     }
 
-    public static boolean verifyFile(File localFile,String key){
-        return verifyFile(localFile,key,"UTF-8");
+    public static boolean verifyFile(File localFile, String key) {
+        return verifyFile(localFile, key, "UTF-8");
     }
 
-    public static boolean verifyFile(File localFile,String key,String encode) {
+    public static boolean verifyFile(File localFile, String key, String encode) {
         String localFilePathWithFileName = localFile.getAbsolutePath();
-        return verifyFile(localFilePathWithFileName,key,encode);
+        return verifyFile(localFilePathWithFileName, key, encode);
     }
 
-    public static boolean verifyFile(String localFilePathWithFileName,String key) {
-        return verifyFile(localFilePathWithFileName,key,"UTF-8");
+    public static boolean verifyFile(String localFilePathWithFileName, String key) {
+        return verifyFile(localFilePathWithFileName, key, "UTF-8");
     }
 
-    public static boolean verifyFile(String localFilePathWithFileName,String key,String encode) {
+    public static boolean verifyFile(String localFilePathWithFileName, String key, String encode) {
         boolean result = false;
-        try{
+        try {
             File file = new File(localFilePathWithFileName);
-            if(!file.exists()){
-                LOGGER.warn("verifyFile local file {} not exists",localFilePathWithFileName);
-            }else{
-                String firstLine  = readFirstLineFromFile(file,encode);
+            if (!file.exists()) {
+                LOGGER.warn("verifyFile local file {} not exists", localFilePathWithFileName);
+            } else {
+                String firstLine = readFirstLineFromFile(file, encode);
                 List<String> lineSplitList = Splitter.on("|").splitToList(firstLine);
-                String lineNum     = lineSplitList.get(0);
+                String lineNum = lineSplitList.get(0);
                 String orgSignData = lineSplitList.get(1);
-                boolean replace = FileUtil.replaceStrToFile(file,9,key,encode);
-                if(replace){
-                    String signData = FileUtil.signFile(file,"SHA-1");
-                    if(!signData.equalsIgnoreCase(orgSignData)){
+                boolean replace = FileUtil.replaceStrToFile(file, 9, key, encode);
+                if (replace) {
+                    String signData = FileUtil.signFile(file, "SHA-1");
+                    if (!signData.equalsIgnoreCase(orgSignData)) {
                         /**标记本地文件失败*/
-                        FileUtil.rename(file,new File(localFilePathWithFileName+"."+"verifyfailed."+ DateUtil.dateToStr(new Date(), "yyyyMMddHHmmss")));
+                        FileUtil.rename(file, new File(localFilePathWithFileName + "." + "verifyfailed." + DateUtil.dateToStr(new Date(), "yyyyMMddHHmmss")));
                         LOGGER.warn("verifyFile verify failed, local file {} orgSignData {}, calcSignData {}", localFilePathWithFileName, orgSignData, signData);
-                    }else{
-                        replace =  FileUtil.replaceStrToFile(file,9,orgSignData,encode);
-                        LOGGER.info("verifyFile recovery local file {} first line result:{}",localFilePathWithFileName,replace?"successed":"failed");
-                        int countLines = FileUtil.countLineFromFile(file,0);
-                        if(Integer.parseInt(lineNum) != countLines-1){
-                            LOGGER.info("verifyFile countline failed local file {}, count lineNums:{}, remark lineNums:{}",localFilePathWithFileName,countLines,lineNum);
-                        }else{
+                    } else {
+                        replace = FileUtil.replaceStrToFile(file, 9, orgSignData, encode);
+                        LOGGER.info("verifyFile recovery local file {} first line result:{}", localFilePathWithFileName, replace ? "successed" : "failed");
+                        int countLines = FileUtil.countLineFromFile(file, 0);
+                        if (Integer.parseInt(lineNum) != countLines - 1) {
+                            LOGGER.info("verifyFile countline failed local file {}, count lineNums:{}, remark lineNums:{}", localFilePathWithFileName, countLines, lineNum);
+                        } else {
                             result = true;
                         }
                     }
                 }
             }
-        }catch(Exception e){
-            LOGGER.error("verifyFile failed,cause by:{}",e);
+        } catch (Exception e) {
+            LOGGER.error("verifyFile failed,cause by:{}", e);
         }
         return result;
     }
 
-    public static boolean mkdir(String path){
+    public static boolean mkdir(String path) {
         File absLocalFilePathDirectory = new File(path);
-        if(!absLocalFilePathDirectory.exists()){
-            try{
+        if (!absLocalFilePathDirectory.exists()) {
+            try {
                 return absLocalFilePathDirectory.mkdirs();
-            }catch (Exception e){
-                try{
-                    if(!absLocalFilePathDirectory.exists()){
+            } catch (Exception e) {
+                try {
+                    if (!absLocalFilePathDirectory.exists()) {
                         return absLocalFilePathDirectory.mkdirs();
                     }
-                }catch (Exception ee){
-                    LOGGER.error("mkdir create file path {} failed,cause by:{}",path ,ee);
+                } catch (Exception ee) {
+                    LOGGER.error("mkdir create file path {} failed,cause by:{}", path, ee);
                 }
             }
-        }else{
+        } else {
             return true;
         }
         return false;
