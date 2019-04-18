@@ -1,5 +1,8 @@
 package com.maxlong.study.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +15,8 @@ import java.util.Date;
  * @dateTime： 2018-8-31 9:46
  */
 public class DateUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtil.class);
 
     private DateUtil() {
         throw new IllegalStateException("Utility class");
@@ -74,6 +79,27 @@ public class DateUtil {
         calendar.add(Calendar.SECOND, num);
         return dateToStr(calendar.getTime(), dateFormat);
     }
+
+    /**
+     * 指定日期加上天数后的日期
+     * @param num 为增加的天数
+     * @param newDate 创建时间
+     * @return
+     */
+    public static final String addDay(String newDate, int num, String pattern) {
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        try {
+            Date currdate = format.parse(newDate);
+            Calendar ca = Calendar.getInstance();
+            ca.setTime(currdate);
+            ca.add(Calendar.DATE, num);
+            return format.format(ca.getTime());
+        } catch (ParseException e) {
+            LOGGER.error("转化时间出错,", e);
+            return null;
+        }
+    }
+
 
     /**
      * convert long to date
