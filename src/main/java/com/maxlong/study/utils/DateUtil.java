@@ -23,6 +23,16 @@ public class DateUtil {
     }
 
     /**
+     * 获取当前日期,指定格式
+     * 描述:<描述函数实现的功能>.
+     * @return
+     */
+    public static String nowDateTime(String dateFormat) {
+        SimpleDateFormat dft = new SimpleDateFormat(dateFormat);
+        return dft.format(new Date());
+    }
+
+    /**
      * convert a date to string in a specifies fromat.
      *
      * @param date
