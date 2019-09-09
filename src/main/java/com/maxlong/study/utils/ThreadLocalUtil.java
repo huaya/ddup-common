@@ -10,6 +10,10 @@ import java.util.*;
 
 public final class ThreadLocalUtil {
 
+    private ThreadLocalUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final ThreadLocal<Map<String, Object>> threadLocal = ThreadLocal.withInitial(() -> new HashMap(4));
 
     public static Map<String, Object> getThreadLocal(){

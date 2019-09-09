@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * @author： ma.xl
  * @datetime： 2018-9-10 18:26
  */
-public class StringUtil {
+public final class StringUtil {
 
     private StringUtil() {
         throw new IllegalStateException("Utility class");
