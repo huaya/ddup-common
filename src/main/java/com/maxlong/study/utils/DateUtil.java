@@ -14,12 +14,31 @@ import java.util.Date;
  * @author： ma.xl
  * @dateTime： 2018-8-31 9:46
  */
-public class DateUtil {
+public final class DateUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateUtil.class);
 
     private DateUtil() {
         throw new IllegalStateException("Utility class");
+    }
+
+    /**
+     * 获取当前日期,指定格式
+     * 描述:<描述函数实现的功能>.
+     * @return
+     */
+    public static String nowDate() {
+        return nowDate(DateFormat.STYLE8);
+    }
+
+    /**
+     * 获取当前日期,指定格式
+     * 描述:<描述函数实现的功能>.
+     * @return
+     */
+    public static String nowDate(String dateFormat) {
+        SimpleDateFormat dft = new SimpleDateFormat(dateFormat);
+        return dft.format(new Date());
     }
 
     /**
@@ -110,6 +129,19 @@ public class DateUtil {
         }
     }
 
+    /**
+     * 指定日期加上天数后的日期
+     * @param num 为增加的天数
+     * @param newDate 创建时间
+     * @return
+     */
+    public static final String addDay(Date newDate, int num, String pattern) {
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(newDate);
+        ca.add(Calendar.DATE, num);
+        return format.format(ca.getTime());
+    }
 
     /**
      * convert long to date
@@ -155,4 +187,24 @@ public class DateUtil {
             return 	0;
         }
     }
+
+    /**
+     * 检查日期格式是否合法
+     * @param date
+     * @param style
+     * @return
+     */
+    public static boolean checkDateFormat(String date, String style) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(style);
+        try {
+            // 设置lenient为false.
+            // 否则SimpleDateFormat会比较宽松地验证日期，比如2007/02/29会被接受，并转换成2007/03/01
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return 	false;
+        }
+    }
+
 }
