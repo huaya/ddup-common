@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
  * @author plus.wang
  * @description 数字小数点格式化
  */
-public class ParamNumFormatUtil {
+public final class NumFormatUtil {
 
     public static final String DF_WITH = "0";
 
@@ -22,7 +22,7 @@ public class ParamNumFormatUtil {
 
     public static final String DF_WITH4 = "#0.0000";
 
-    private ParamNumFormatUtil() {
+    private NumFormatUtil() {
         throw new IllegalStateException("Utility class");
     }
 
