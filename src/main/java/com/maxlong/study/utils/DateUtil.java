@@ -1,5 +1,6 @@
 package com.maxlong.study.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,24 +63,6 @@ public final class DateUtil {
         SimpleDateFormat myFormat = new SimpleDateFormat(dateFormat);
         return myFormat.format(date);
     }
-
-    /**
-     * parse a String to Date in a specifies fromat.
-     *
-     * @param dateStr
-     * @param dateFormat
-     * @return
-     * @throws ParseException
-     */
-    public static Date strToDate(String dateStr, String dateFormat) {
-        SimpleDateFormat myFormat = new SimpleDateFormat(dateFormat);
-        try {
-            return myFormat.parse(dateStr);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
 
     /**
      * date add Second
@@ -204,6 +187,171 @@ public final class DateUtil {
             return true;
         } catch (ParseException e) {
             return 	false;
+        }
+    }
+
+    /**
+     * 获取当前日期,指定格式
+     * 描述:<描述函数实现的功能>.
+     *
+     * @return
+     */
+    public static String nowDateTime() {
+        SimpleDateFormat dft = new SimpleDateFormat(DateFormat.STYLE13);
+        return dft.format(new Date());
+    }
+
+    /**
+     * parse a String to Date in a specifies fromat.
+     *
+     * @param dateStr
+     * @param dateFormat
+     * @return
+     * @throws ParseException
+     */
+    public static Date strToDate(String dateStr, String dateFormat) {
+        if (StringUtils.isBlank(dateStr)) {
+            return null;
+        }
+        try {
+            SimpleDateFormat myFormat = new SimpleDateFormat(dateFormat);
+            return myFormat.parse(dateStr);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * date add day
+     *
+     * @param date
+     * @param num
+     * @return
+     */
+    public static Date addDay(Date date, int num) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, num);
+        return calendar.getTime();
+    }
+
+    /**
+     * 指定日期加上月数
+     *
+     * @param newDate
+     * @param num
+     * @param pattern
+     * @return
+     */
+    public static final String addMonth(String newDate, int num, String pattern) {
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        try {
+            Date currdate = format.parse(newDate);
+            Calendar ca = Calendar.getInstance();
+            ca.setTime(currdate);
+            ca.add(Calendar.MONTH, num);
+            return format.format(ca.getTime());
+        } catch (ParseException e) {
+            LOGGER.error("转化时间出错,", e);
+            return null;
+        }
+    }
+
+    /**
+     * date add month
+     *
+     * @param date
+     * @param num
+     * @return
+     */
+    public static Date addMonth(Date date, int num) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, num);
+        return calendar.getTime();
+    }
+
+    /**
+     * 指定日期加上月数
+     *
+     * @param num     为增加的天数
+     * @param newDate 创建时间
+     * @return
+     */
+    public static final String addMonth(Date newDate, int num, String pattern) {
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(newDate);
+        ca.add(Calendar.MONTH, num);
+        return format.format(ca.getTime());
+    }
+
+    /**
+     * 计算两个日期相隔天数
+     * @param beforeDay
+     * @param afterDay
+     * @return
+     */
+    public static long getTwoDateDays(Date beforeDay, Date afterDay) {
+        return beforeDay.getTime() - afterDay.getTime() / (1000 * 3600 * 24);
+    }
+
+    /**
+     * 计算两个日期相隔天数
+     * @param beforeDay
+     * @param afterDay
+     * @param format
+     * @return
+     */
+    public static long getTwoDateDays(String beforeDay, String afterDay, String format) {
+        SimpleDateFormat sm = new SimpleDateFormat(format);
+        try {
+            Date beforeDate = sm.parse(beforeDay);
+            Date afterDate = sm.parse(afterDay);
+            return getTwoDateDays(beforeDate, afterDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * 返回最小日期
+     * @param date1
+     * @param date2
+     * @return
+     */
+    public static Date minDate(Date date1, Date date2) {
+        if(date1 == null){
+            return date2;
+        }
+        if(date2 == null){
+            return date1;
+        }
+        if(date1.getTime() > date2.getTime()){
+            return date2;
+        } else {
+            return date1;
+        }
+    }
+
+    /**
+     * 返回最大日期
+     * @param date1
+     * @param date2
+     * @return
+     */
+    public static Date maxDate(Date date1, Date date2) {
+        if(date1 == null){
+            return date2;
+        }
+        if(date2 == null){
+            return date1;
+        }
+        if(date1.getTime() > date2.getTime()){
+            return date1;
+        } else {
+            return date2;
         }
     }
 
